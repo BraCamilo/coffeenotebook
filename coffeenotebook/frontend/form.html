@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>Recipe Form</title>
+        <link rel="stylesheet" href="/coffeenotebook/frontend/styles/style_form.css">
+    </head>
+    <body>
+    <header>
+        <h1>☕ CoffeeNotebook</h1>
+        <a href="index.html" class="btn-primary">← Volver</a>
+    </header>
+    <main>
+        <article class="form-container">
+            <form>
+                <h3 id="form-title">Nueva receta</h3>
+                <label for="name">Nombre</label>
+                <input type="text" id="name" required>
+
+                <label for="origin">Origen</label>
+                <input type="text" id="origin">
+
+                <label for="method">Método</label>
+                <input type="text" id="method">
+
+                <label for="ingredients">Ingredientes</label>
+                <textarea id="ingredients" rows="3"></textarea>
+
+                <label for="steps">Pasos</label>
+                <textarea id="steps" rows="4"></textarea>
+
+                <button id="submit">Guardar receta</button>
+            </form>
+        </article>
+    </main>
+</body>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id'); // null si es nueva, "1" si es edición
+
+        //Función 1 — Leer los inputs del formulario
+        //Su único trabajo es agarrar lo que el usuario
+        function getFormData() {
+            return {
+                name: document.getElementById('name').value,
+                origin: document.getElementById('origin').value,
+                method: document.getElementById('method').value,
+                ingredients: document.getElementById('ingredients').value,
+                steps: document.getElementById('steps').value
+            }
+            
+        }
+        //Función 2 — Guardar (crear o editar)
+        //Se ejecuta cuando el usuario hace clic en Submit
+        document.getElementById('submit').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
+
+            const data = getFormData(); // Agarra los datos del formulario
+
+            if (id) {
+                // Si hay un ID, es una edición
+                fetch(`http://localhost:8080/api/recipes/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(() => window.location.href = 'index.html'); // Volver al listado
+            } else {
+                // Si no hay ID, es una creación
+                fetch('http://localhost:8080/api/recipes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(() => window.location.href = 'index.html'); // Volver al listado
+            }
+        });
+
+        //Función 3 — Cargar datos si es edición
+        //Si el usuario está editando, cuando la página carga tenemos que pedir los datos de
+        //esa receta al backend y llenar el formulario
+        function loadRecipe(id) {
+            fetch(`http://localhost:8080/api/recipes/${id}`)
+                .then(res => res.json())
+                .then(recipe => {
+                    document.getElementById('name').value = recipe.name;
+                    document.getElementById('origin').value = recipe.origin;
+                    document.getElementById('method').value = recipe.method;
+                    document.getElementById('ingredients').value = recipe.ingredients;
+                    document.getElementById('steps').value = recipe.steps;
+                });
+        }
+
+        if (id) {
+            loadRecipe(id);
+        }
+
+    </script>
+</html>
