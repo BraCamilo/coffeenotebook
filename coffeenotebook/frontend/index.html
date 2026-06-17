@@ -62,7 +62,7 @@
 
     // Esta función consulta GET /api/recipes y dibuja las tarjetas
     function getAllRecipes() {
-        fetch('http://localhost:8080/api/recipes')
+        fetch('https://coffeenotebook-production.up.railway.app/api/recipes')
             .then(res => res.json())  // convierte la respuesta a JSON
             .then(recipes => renderRecipes(recipes));  // dibuja las recetas
     }
@@ -96,7 +96,7 @@
     function deleteRecipe(id) {
         if (!confirm('¿Seguro que quieres eliminar esta receta?')) return;
 
-        fetch(`http://localhost:8080/api/recipes/${id}`, {
+        fetch(`https://coffeenotebook-production.up.railway.app/api/recipes/${id}`, {
             method: 'DELETE'
         }).then(() => getAllRecipes()); // recarga la lista después de eliminar
     }
@@ -129,14 +129,14 @@
 
             if (id) {
                 // Si hay un ID, es una edición
-                fetch(`http://localhost:8080/api/recipes/${id}`, {
+                fetch(`https://coffeenotebook-production.up.railway.app/api/recipes/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 }).then(() => window.location.href = 'index.html'); // Volver al listado
             } else {
                 // Si no hay ID, es una creación
-                fetch('http://localhost:8080/api/recipes', {
+                fetch('https://coffeenotebook-production.up.railway.app/api/recipes', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -148,7 +148,7 @@
         //Si el usuario está editando, cuando la página carga tenemos que pedir los datos de
         //esa receta al backend y llenar el formulario
         function loadRecipe(id) {
-            fetch(`http://localhost:8080/api/recipes/${id}`)
+            fetch(`https://coffeenotebook-production.up.railway.app/api/recipes/${id}`)
                 .then(res => res.json())
                 .then(recipe => {
                     document.getElementById('name').value = recipe.name;
@@ -169,7 +169,7 @@
 
     /* MOSTRAR RECETAS */
     function openModal(id){
-        fetch(`http://localhost:8080/api/recipes/${id}`, {
+        fetch(`https://coffeenotebook-production.up.railway.app/api/recipes/${id}`, {
             method: 'GET'
         })
             .then(res => res.json())
